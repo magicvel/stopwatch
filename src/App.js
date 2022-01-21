@@ -5,58 +5,68 @@ import './App.css';
 
 
 function App() {
-  const [time, setTime] = useState({ms:0, s:55, m:59, h:0});
-  const [interv, setInterv] = useState();
+  const [time, setTime] = useState({s: 0, m: 0, h: 0});
+  const [stopwatch, setStopwatch] = useState();
+  const [resumeClicked, setResumeClicked] = useState(false);
   const [status, setStatus] = useState(0);
-  // Not started = 0
+  // Statuses: 
+  // not started = 0
   // started = 1
   // stopped = 2
 
-  const start = () => {
-    run();
-    setStatus(1);
-    setInterv(setInterval(run, 10));
-  };
-
-  let updatedMs = time.ms,
-      updatedS = time.s, 
+  let updatedS = time.s, 
       updatedM = time.m, 
       updatedH = time.h;
 
   const run = () => {
-    if(updatedM === 60){
-      updatedH++;
-      updatedM = 0;
-    }
+    updatedS++;
+  
     if(updatedS === 60){
       updatedM++;
       updatedS = 0;
     }
-    if(updatedMs === 100){
-      updatedS++;
-      updatedMs = 0;
+
+    if(updatedM === 60){
+      updatedH++;
+      updatedM = 0;
     }
-    updatedMs++;
-    return setTime({ms:updatedMs, s:updatedS, m:updatedM, h:updatedH});
+
+    setTime({s: updatedS, m: updatedM, h: updatedH});
+  };
+
+  const start = () => {
+    setStatus(1);
+    setStopwatch(setInterval(run, 1000));
   };
 
   const wait = () => {
-    clearInterval(interv);
-    setStatus(2);
+    if (resumeClicked){
+      clearInterval(stopwatch);
+      setStatus(2);
+    }
+    setResumeClicked(true);
+
+    setTimeout(() => {
+      setResumeClicked(false);
+    }, 300);
   };
   
-
   const stop = () => {
-    clearInterval(interv);
+    clearInterval(stopwatch);
     setStatus(0);
-    setTime({ms:0, s:0, m:0, h:0})
+    setTime({s:0, m:0, h:0})
   };
 
   const resume = () => start();
+
   const reset = () => {
-    clearInterval(interv);
+    clearInterval(stopwatch);
     setStatus(1);
-    setTime({ms:0, s:0, m:0, h:0});
+
+    updatedS = updatedM = updatedH = 0 
+    setTime({s:0, m:0, h:0});
+  
+    start();
   };
 
 
