@@ -12,27 +12,30 @@ function App() {
   // Statuses: 
   // not started = 0
   // started = 1
-  // stopped = 2
+  // waite = 2
 
-  let updatedS = time.s, 
-      updatedM = time.m, 
-      updatedH = time.h;
+ 
 
-  const run = () => {
-    updatedS++;
-  
-    if(updatedS === 60){
-      updatedM++;
-      updatedS = 0;
+const run = () => {
+  setTime(
+    (time) => {
+      let s = time.s,
+        m = time.m,
+        h = time.h
+      
+      s++;
+      if(s === 60){
+        m++;
+        s = 0;
+      }
+      if(m === 60){
+        h++;
+        m = 0;
+      }
+      return {s: s, m: m, h: h}
     }
-
-    if(updatedM === 60){
-      updatedH++;
-      updatedM = 0;
-    }
-
-    setTime({s: updatedS, m: updatedM, h: updatedH});
-  };
+  )
+};
 
   const start = () => {
     setStatus(1);
@@ -61,13 +64,11 @@ function App() {
 
   const reset = () => {
     clearInterval(stopwatch);
-    setStatus(1);
-
-    updatedS = updatedM = updatedH = 0 
     setTime({s:0, m:0, h:0});
-  
     start();
   };
+
+  
 
 
   return (
